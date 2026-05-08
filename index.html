@@ -4,403 +4,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FinanzasPro Cloud</title>
-    
-    <!-- PWA Meta tags for Android (Oppo & TCL) -->
+    <title>FinanzasPro Camilo</title>
     <meta name="theme-color" content="#4f46e5">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
-    <!-- CSS & Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            background-color: #f8fafc;
-        }
-
-        /* Optimization for Nexpaper (Anti-glare friendly contrast) */
-        .nexpaper-card {
-            background-color: #ffffff;
-            border: 1px solid #e2e8f0;
-        }
-
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-
-        .btn-active:active {
-            transform: scale(0.96);
-        }
-
-        /* Responsive grid adjustment */
-        @media (min-width: 768px) {
-            .tablet-layout {
-                display: grid;
-                grid-template-columns: 350px 1fr;
-                gap: 1.5rem;
-            }
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .modal-up { animation: slideUp 0.3s ease-out forwards; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
     </style>
 </head>
-<body class="text-slate-900">
-
-    <div id="app" class="max-w-6xl mx-auto min-h-screen flex flex-col pb-24">
-        
-        <!-- Header Section -->
-        <header class="bg-indigo-600 pt-10 pb-12 px-6 lg:rounded-b-[3rem] shadow-xl text-white">
-            <div class="max-w-4xl mx-auto">
-                <div class="flex justify-between items-center mb-8">
-                    <div class="flex items-center gap-3">
-                        <div class="bg-white/20 p-2 rounded-2xl">
-                            <i data-lucide="wallet" class="w-6 h-6"></i>
-                        </div>
-                        <div>
-                            <h1 class="text-xl font-extrabold tracking-tight">FinanzasPro</h1>
-                            <p class="text-[10px] text-indigo-200 font-bold uppercase tracking-widest">Sincronizado en Nube</p>
-                        </div>
+<body class="bg-slate-50 pb-24">
+    <div id="app" class="max-w-md mx-auto min-h-screen flex flex-col">
+        <header class="bg-indigo-600 pt-10 pb-10 px-6 rounded-b-[2rem] shadow-lg text-white">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-xl font-black italic">FinanzasPro</h1>
+                <div class="bg-white/20 px-3 py-1 rounded-full text-[10px] font-bold uppercase">Memoria Local</div>
+            </div>
+            <div class="text-center">
+                <p class="text-indigo-100 text-[10px] font-bold uppercase mb-1">Balance Neto</p>
+                <h2 id="total-balance" class="text-4xl font-black mb-6">$0</h2>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-white/10 p-3 rounded-2xl text-left">
+                        <p class="text-[9px] font-bold text-indigo-100 uppercase">Ingresos</p>
+                        <p id="total-income" class="font-bold text-sm">$0</p>
                     </div>
-                    <div id="sync-status" class="flex items-center gap-2 bg-emerald-500/20 px-3 py-1 rounded-full border border-emerald-500/30">
-                        <div class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>
-                        <span class="text-[9px] font-bold uppercase">Online</span>
-                    </div>
-                </div>
-                
-                <div class="text-center md:text-left md:flex md:items-center md:justify-between">
-                    <div>
-                        <p class="text-indigo-100 text-[10px] font-bold uppercase tracking-widest mb-1">Balance Neto</p>
-                        <h2 id="total-balance" class="text-5xl font-black mb-6 md:mb-0">$0</h2>
-                    </div>
-                    
-                    <div class="flex gap-3 justify-center">
-                        <div class="bg-white/10 backdrop-blur-md p-4 rounded-3xl flex items-center gap-4 min-w-[140px]">
-                            <div class="bg-emerald-400 p-2 rounded-xl text-emerald-900">
-                                <i data-lucide="arrow-up-right" class="w-5 h-5"></i>
-                            </div>
-                            <div class="text-left">
-                                <p class="text-[9px] font-bold text-indigo-100 uppercase">Ingresos</p>
-                                <p id="total-income" class="font-bold text-lg">$0</p>
-                            </div>
-                        </div>
-                        <div class="bg-white/10 backdrop-blur-md p-4 rounded-3xl flex items-center gap-4 min-w-[140px]">
-                            <div class="bg-rose-400 p-2 rounded-xl text-rose-900">
-                                <i data-lucide="arrow-down-left" class="w-5 h-5"></i>
-                            </div>
-                            <div class="text-left">
-                                <p class="text-[9px] font-bold text-indigo-100 uppercase">Gastos</p>
-                                <p id="total-expenses" class="font-bold text-lg">$0</p>
-                            </div>
-                        </div>
+                    <div class="bg-white/10 p-3 rounded-2xl text-left">
+                        <p class="text-[9px] font-bold text-indigo-100 uppercase">Gastos</p>
+                        <p id="total-expenses" class="font-bold text-sm">$0</p>
                     </div>
                 </div>
             </div>
         </header>
 
-        <!-- Dynamic Content Layout -->
-        <main class="flex-1 px-4 lg:px-8 py-8 max-w-5xl mx-auto w-full">
-            <div class="tablet-layout">
-                
-                <!-- Left Column: Quick Analytics & Form (Visible on Tablet) -->
-                <aside class="space-y-6">
-                    <div class="nexpaper-card p-6 rounded-3xl shadow-sm">
-                        <h3 class="font-extrabold text-slate-800 mb-4 flex items-center gap-2">
-                            <i data-lucide="pie-chart" class="w-4 h-4 text-indigo-500"></i>
-                            Análisis Rápido
-                        </h3>
-                        <div id="category-bars" class="space-y-3">
-                            <!-- Category progress bars will appear here -->
-                            <p class="text-xs text-slate-400 italic text-center py-4">Registra gastos para ver estadísticas</p>
-                        </div>
-                    </div>
+        <main class="px-6 py-6 space-y-4" id="list-container">
+            </main>
 
-                    <div class="hidden md:block nexpaper-card p-6 rounded-3xl shadow-sm border-2 border-indigo-50">
-                        <h3 class="font-extrabold text-slate-800 mb-4">Acceso Rápido</h3>
-                        <p class="text-xs text-slate-500 mb-4">Usa el botón central inferior para añadir nuevos movimientos desde cualquier pantalla.</p>
-                        <div class="bg-slate-50 p-4 rounded-2xl">
-                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-2">Tip de Ahorro</p>
-                            <p class="text-xs font-medium text-slate-600 italic">"Los pequeños gastos acumulados son los que vacían la billetera."</p>
-                        </div>
-                    </div>
-                </aside>
-
-                <!-- Right Column: Transactions List -->
-                <section class="mt-6 md:mt-0">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="font-extrabold text-slate-800 flex items-center gap-2">
-                            <i data-lucide="history" class="w-4 h-4 text-indigo-500"></i>
-                            Historial de Movimientos
-                        </h3>
-                        <span id="item-count" class="text-[10px] font-black bg-slate-200 text-slate-500 px-2 py-1 rounded-md uppercase">0 Items</span>
-                    </div>
-                    
-                    <div id="transaction-list" class="space-y-3">
-                        <!-- Transactions will be rendered here -->
-                        <div class="flex flex-col items-center justify-center py-20 opacity-20">
-                            <i data-lucide="inbox" class="w-12 h-12 mb-2"></i>
-                            <p class="font-bold text-xs uppercase tracking-widest">Buscando datos...</p>
-                        </div>
-                    </div>
-                </section>
-
-            </div>
-        </main>
-
-        <!-- Floating Action Bar (Android Optimized) -->
-        <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-md bg-white/95 backdrop-blur-xl border border-slate-200 p-2 rounded-full shadow-2xl flex items-center justify-between z-40">
-            <button class="flex-1 flex flex-col items-center py-2 text-indigo-600 btn-active">
-                <i data-lucide="home" class="w-6 h-6"></i>
-                <span class="text-[8px] font-bold uppercase mt-1 tracking-tighter">Resumen</span>
-            </button>
-            
-            <button id="btn-add-main" class="flex-shrink-0 w-14 h-14 bg-indigo-600 text-white rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-transform -translate-y-5 border-4 border-slate-50 btn-active">
+        <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] bg-white border shadow-2xl p-2 rounded-full flex justify-between items-center">
+            <div class="flex-1 text-center text-indigo-600"><i data-lucide="home" class="mx-auto"></i></div>
+            <button id="add-trigger" class="w-14 h-14 bg-indigo-600 text-white rounded-full flex items-center justify-center -translate-y-4 shadow-lg active:scale-90 transition-all">
                 <i data-lucide="plus" class="w-8 h-8"></i>
             </button>
-
-            <button class="flex-1 flex flex-col items-center py-2 text-slate-400 btn-active">
-                <i data-lucide="settings" class="w-6 h-6"></i>
-                <span class="text-[8px] font-bold uppercase mt-1 tracking-tighter">Ajustes</span>
-            </button>
+            <div class="flex-1 text-center text-slate-300"><i data-lucide="bar-chart" class="mx-auto"></i></div>
         </nav>
 
-        <!-- Entry Modal -->
-        <div id="modal-container" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-end justify-center">
-            <div class="w-full max-w-md bg-white rounded-t-[3rem] p-8 shadow-2xl transform translate-y-full transition-transform duration-300" id="modal-content">
-                <div class="flex justify-between items-center mb-8">
-                    <h2 class="text-2xl font-black text-slate-800">Nueva Entrada</h2>
-                    <button id="btn-close-modal" class="p-2 bg-slate-100 rounded-full text-slate-400">
-                        <i data-lucide="x" class="w-5 h-5"></i>
-                    </button>
+        <div id="modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden flex items-end z-50">
+            <div class="w-full bg-white rounded-t-[2.5rem] p-8 modal-up">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-black">Nuevo Registro</h3>
+                    <button id="close-modal" class="text-slate-400 p-2"><i data-lucide="x"></i></button>
                 </div>
-
-                <form id="finance-form" class="space-y-6">
-                    <div class="flex bg-slate-100 p-1.5 rounded-2xl">
-                        <button type="button" data-type="expense" class="type-toggle flex-1 py-3 rounded-xl font-bold text-sm bg-white text-rose-500 shadow-sm transition-all">Gasto</button>
-                        <button type="button" data-type="income" class="type-toggle flex-1 py-3 rounded-xl font-bold text-sm text-slate-400 transition-all">Ingreso</button>
+                <form id="form" class="space-y-4">
+                    <div class="flex bg-slate-100 p-1 rounded-xl">
+                        <button type="button" id="set-exp" class="flex-1 py-2 rounded-lg font-bold text-xs bg-white text-rose-500 shadow-sm">Gasto</button>
+                        <button type="button" id="set-inc" class="flex-1 py-2 rounded-lg font-bold text-xs text-slate-400">Ingreso</button>
                     </div>
-
-                    <div class="space-y-4">
-                        <div>
-                            <label class="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block">Descripción</label>
-                            <input type="text" id="input-text" placeholder="Ej. Supermercado" class="w-full p-4 bg-slate-50 border-none rounded-2xl font-bold text-base focus:ring-2 focus:ring-indigo-500 outline-none" required>
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block">Monto (MXN)</label>
-                            <div class="relative">
-                                <span class="absolute left-4 top-1/2 -translate-y-1/2 font-black text-slate-300 text-2xl">$</span>
-                                <input type="number" id="input-amount" step="0.01" placeholder="0.00" class="w-full p-4 pl-10 bg-slate-50 border-none rounded-2xl font-black text-3xl focus:ring-2 focus:ring-indigo-500 outline-none" required>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block">Categoría</label>
-                                <select id="input-category" class="w-full p-4 bg-slate-50 border-none rounded-2xl font-bold text-sm outline-none">
-                                    <option value="Comida">Comida</option>
-                                    <option value="Transporte">Transporte</option>
-                                    <option value="Servicios">Servicios</option>
-                                    <option value="Ocio">Ocio</option>
-                                    <option value="Otros">Otros</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-black text-slate-400 uppercase ml-2 mb-1 block">Fecha</label>
-                                <input type="date" id="input-date" class="w-full p-4 bg-slate-50 border-none rounded-2xl font-bold text-sm outline-none">
-                            </div>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="w-full py-5 bg-indigo-600 text-white rounded-[2rem] font-black text-lg shadow-xl shadow-indigo-100 btn-active flex items-center justify-center gap-2">
-                        <i data-lucide="cloud-upload" class="w-5 h-5"></i>
-                        Confirmar Registro
-                    </button>
+                    <input type="text" id="desc" placeholder="Descripción" class="w-full p-4 bg-slate-50 rounded-xl outline-none font-bold" required>
+                    <input type="number" id="amt" placeholder="Monto" class="w-full p-4 bg-slate-50 rounded-xl outline-none font-black text-2xl" required>
+                    <button type="submit" class="w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold shadow-lg">Guardar</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, deleteDoc, doc, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <script>
+        let transactions = JSON.parse(localStorage.getItem('finanzas_camilo')) || [];
+        let type = 'expense';
 
-        // Global environment config
-        const firebaseConfig = JSON.parse(window.__firebase_config || '{}');
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = window.__app_id || 'universal-finance-app';
+        const render = () => {
+            const list = document.getElementById('list-container');
+            const tInc = transactions.filter(t => t.type === 'income').reduce((a, b) => a + Number(b.amt), 0);
+            const tExp = transactions.filter(t => t.type === 'expense').reduce((a, b) => a + Number(b.amt), 0);
+            
+            document.getElementById('total-balance').innerText = `$${(tInc - tExp).toLocaleString()}`;
+            document.getElementById('total-income').innerText = `$${tInc.toLocaleString()}`;
+            document.getElementById('total-expenses').innerText = `$${tExp.toLocaleString()}`;
 
-        let user = null;
-        let currentType = 'expense';
-
-        // UI References
-        const modal = document.getElementById('modal-container');
-        const modalContent = document.getElementById('modal-content');
-        const listContainer = document.getElementById('transaction-list');
-        const categoryContainer = document.getElementById('category-bars');
-
-        // Init Lucide
-        lucide.createIcons();
-
-        // 1. Auth Flow
-        async function startApp() {
-            try {
-                const cred = await signInAnonymously(auth);
-                user = cred.user;
-                setupRealtimeListener();
-            } catch (err) {
-                console.error("Auth failed:", err);
-            }
-        }
-
-        // 2. Realtime Listener
-        function setupRealtimeListener() {
-            const colRef = collection(db, 'artifacts', appId, 'users', user.uid, 'transactions');
-            // Rule: Avoid complex query ordering if indexes are not pre-defined
-            onSnapshot(query(colRef), (snapshot) => {
-                const data = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-                updateUI(data);
-            });
-        }
-
-        // 3. UI Update Logic
-        function updateUI(transactions) {
-            let inc = 0;
-            let exp = 0;
-            const categoryTotals = {};
-
-            // Sort manually in memory (Rule 2)
-            const sorted = [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
-
-            // Calculate Totals
-            sorted.forEach(t => {
-                const val = parseFloat(t.amount);
-                if (t.type === 'income') inc += val;
-                else {
-                    exp += val;
-                    categoryTotals[t.category] = (categoryTotals[t.category] || 0) + val;
-                }
-            });
-
-            // Update Dash Numbers
-            document.getElementById('total-balance').innerText = `$${(inc - exp).toLocaleString('es-MX', {maximumFractionDigits:0})}`;
-            document.getElementById('total-income').innerText = `$${inc.toLocaleString('es-MX', {maximumFractionDigits:0})}`;
-            document.getElementById('total-expenses').innerText = `$${exp.toLocaleString('es-MX', {maximumFractionDigits:0})}`;
-            document.getElementById('item-count').innerText = `${sorted.length} Movimientos`;
-
-            // Render Transaction List
-            if (sorted.length === 0) {
-                listContainer.innerHTML = `<div class="text-center py-20 opacity-30 italic">No hay registros este mes</div>`;
-            } else {
-                listContainer.innerHTML = sorted.map(t => `
-                    <div class="bg-white p-4 rounded-3xl border border-slate-100 flex justify-between items-center group transition-all hover:border-indigo-100">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center ${t.type === 'income' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}">
-                                <i data-lucide="${t.type === 'income' ? 'trending-up' : 'tag'}" class="w-5 h-5"></i>
-                            </div>
-                            <div>
-                                <p class="font-bold text-sm text-slate-800">${t.text}</p>
-                                <div class="flex items-center gap-2 text-[9px] font-black uppercase text-slate-400">
-                                    <span class="text-indigo-500">${t.category}</span>
-                                    <span>•</span>
-                                    <span>${new Date(t.date + 'T00:00:00').toLocaleDateString('es-ES', {day:'2-digit', month:'short'})}</span>
-                                </div>
-                            </div>
+            list.innerHTML = transactions.map((t, i) => `
+                <div class="bg-white p-4 rounded-2xl shadow-sm flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 rounded-lg ${t.type === 'income' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}">
+                            <i data-lucide="${t.type === 'income' ? 'arrow-up' : 'shopping-cart'}"></i>
                         </div>
-                        <div class="flex items-center gap-4">
-                            <span class="font-black text-sm ${t.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}">
-                                ${t.type === 'income' ? '+' : '-'}$${parseFloat(t.amount).toLocaleString()}
-                            </span>
-                            <button onclick="window.deleteItem('${t.id}')" class="opacity-0 group-hover:opacity-100 p-2 text-slate-300 hover:text-rose-500 transition-all">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            </button>
+                        <div>
+                            <p class="font-bold text-sm">${t.desc}</p>
+                            <p class="text-[10px] text-slate-400 uppercase font-bold">${t.date}</p>
                         </div>
                     </div>
-                `).join('');
-            }
-
-            // Render Category Bars (Tablet Feature)
-            if (exp > 0) {
-                categoryContainer.innerHTML = Object.entries(categoryTotals).map(([cat, val]) => {
-                    const perc = Math.round((val / exp) * 100);
-                    return `
-                        <div class="space-y-1">
-                            <div class="flex justify-between text-[10px] font-bold">
-                                <span class="text-slate-500 uppercase">${cat}</span>
-                                <span class="text-slate-900">${perc}%</span>
-                            </div>
-                            <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-                                <div class="bg-indigo-500 h-full rounded-full" style="width: ${perc}%"></div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            } else {
-                categoryContainer.innerHTML = `<p class="text-xs text-slate-400 italic text-center py-4">Sin gastos para graficar</p>`;
-            }
-
+                    <div class="flex items-center gap-2">
+                        <span class="font-black ${t.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}">
+                            ${t.type === 'income' ? '+' : '-'}$${Number(t.amt).toLocaleString()}
+                        </span>
+                        <button onclick="del(${i})" class="text-slate-200 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                </div>
+            `).join('');
             lucide.createIcons();
-        }
-
-        // 4. Actions
-        window.deleteItem = async (id) => {
-            if (!confirm("¿Eliminar este registro?")) return;
-            const docRef = doc(db, 'artifacts', appId, 'users', user.uid, 'transactions', id);
-            await deleteDoc(docRef);
+            localStorage.setItem('finanzas_camilo', JSON.stringify(transactions));
         };
 
-        document.getElementById('finance-form').onsubmit = async (e) => {
+        window.del = (i) => { transactions.splice(i, 1); render(); };
+
+        document.getElementById('add-trigger').onclick = () => document.getElementById('modal').classList.remove('hidden');
+        document.getElementById('close-modal').onclick = () => document.getElementById('modal').classList.add('hidden');
+        
+        document.getElementById('set-inc').onclick = () => { 
+            type = 'income'; 
+            document.getElementById('set-inc').className = "flex-1 py-2 rounded-lg font-bold text-xs bg-white text-emerald-500 shadow-sm";
+            document.getElementById('set-exp').className = "flex-1 py-2 rounded-lg font-bold text-xs text-slate-400";
+        };
+        document.getElementById('set-exp').onclick = () => { 
+            type = 'expense'; 
+            document.getElementById('set-exp').className = "flex-1 py-2 rounded-lg font-bold text-xs bg-white text-rose-500 shadow-sm";
+            document.getElementById('set-inc').className = "flex-1 py-2 rounded-lg font-bold text-xs text-slate-400";
+        };
+
+        document.getElementById('form').onsubmit = (e) => {
             e.preventDefault();
-            const text = document.getElementById('input-text').value;
-            const amount = document.getElementById('input-amount').value;
-            const category = document.getElementById('input-category').value;
-            const date = document.getElementById('input-date').value || new Date().toISOString().split('T')[0];
-
-            await addDoc(collection(db, 'artifacts', appId, 'users', user.uid, 'transactions'), {
-                text, amount, category, date, type: currentType, createdAt: new Date().toISOString()
+            transactions.unshift({
+                desc: document.getElementById('desc').value,
+                amt: document.getElementById('amt').value,
+                type: type,
+                date: new Date().toLocaleDateString()
             });
-
-            closeModal();
             e.target.reset();
+            document.getElementById('modal').classList.add('hidden');
+            render();
         };
 
-        // Modal Logic
-        const openModal = () => {
-            modal.classList.remove('hidden');
-            setTimeout(() => modalContent.classList.remove('translate-y-full'), 10);
-        };
-
-        const closeModal = () => {
-            modalContent.classList.add('translate-y-full');
-            setTimeout(() => modal.classList.add('hidden'), 300);
-        };
-
-        document.getElementById('btn-add-main').onclick = openModal;
-        document.getElementById('btn-close-modal').onclick = closeModal;
-
-        document.querySelectorAll('.type-toggle').forEach(btn => {
-            btn.onclick = () => {
-                currentType = btn.dataset.type;
-                document.querySelectorAll('.type-toggle').forEach(b => {
-                    b.classList.remove('bg-white', 'text-rose-500', 'text-emerald-500', 'shadow-sm');
-                    b.classList.add('text-slate-400');
-                });
-                btn.classList.remove('text-slate-400');
-                btn.classList.add('bg-white', 'shadow-sm', currentType === 'income' ? 'text-emerald-500' : 'text-rose-500');
-            };
-        });
-
-        // Set default date
-        document.getElementById('input-date').value = new Date().toISOString().split('T')[0];
-
-        startApp();
+        render();
     </script>
 </body>
 </html>
+
 
 ```
